@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>シンロビAI - 子どもの将来を前向きに語り合う進路比較マップ</title>
+  <title>シンロビAI - 子どもの将来を前向きに語り合う進路比較ツール</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EKGGXE78K5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-EKGGXE78K5');
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
@@ -178,9 +189,9 @@
 
       <!-- モバイル用 表示切替タブ -->
       <div class="flex bg-slate-200/70 p-1 rounded-xl font-bold text-xs gap-1 sm:hidden">
-        <button id="tab-btn-both" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-slate-900 transition">2つ見比べる</button>
-        <button id="tab-btn-a" class="flex-1 py-2 rounded-lg text-pathA-text transition truncate">進路A</button>
-        <button id="tab-btn-b" class="flex-1 py-2 rounded-lg text-pathB-text transition truncate">進路B</button>
+        <button id="tab-btn-both" type="button" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-slate-900 transition">2つ見比べる</button>
+        <button id="tab-btn-a" type="button" class="flex-1 py-2 rounded-lg text-pathA-text transition truncate">進路A</button>
+        <button id="tab-btn-b" type="button" class="flex-1 py-2 rounded-lg text-pathB-text transition truncate">進路B</button>
       </div>
 
       <div class="space-y-4">
@@ -349,7 +360,7 @@
           tagsRisk: ["6年間の受験意識", "進路保証なし"],
           merits: [
             { title: "進学先の選択肢の広さ", body: "特定の大学に縛られず、本人の伸びしろや興味に応じて最難関大学まで自由に挑戦できます。" },
-            { title: "目標達成力と勉強の体力", body: "高い目標に向かって努力し抜く過程で、将来の社会生活でも活きる自己管理力が身につきやすいです。" }
+            { title: "目標達成力と勉強の体力", body: "高い目標に向かって努力し抜く過程で、将来の社会生活でも活きる自己管理力が身つきやすいです。" }
           ],
           risks: [
             { title: "中高6年間受験への意識が必要", body: "中学受験が終わった後も模試や大学受験を見据えた勉強が続き、気持ちが休まりにくい面があります。" },
@@ -622,7 +633,7 @@
           tagsRisk: ["中学時代の内申点配慮", "高校受験での一時中断"],
           merits: [
             { title: "学費を抑えて大学費用に資金集中", body: "中学の学費がかからないため費用をしっかりプールし、高校や大学での教育費に充てられます。" },
-            { title: "高偏差値高校での切磋琢磨", body: "高校進学後に優秀な仲間と競い合い、難関大一般入試に向けた実戦力が大きく伸びます。" }
+            { title: "高偏差値高校での切磋琢磨", body: "高校進学後に優秀な仲間と競い合い、難関大一般入試に向けて一気に学力を伸ばせる環境があります。" }
           ],
           risks: [
             { title: "中学時代の内申対策・環境ケア", body: "中学3年間は内申点への配慮が必要で、周囲の環境や先生との相性などの影響を受けやすいです。" },
@@ -793,8 +804,9 @@
     const tabBtnA = document.getElementById('tab-btn-a');
     const tabBtnB = document.getElementById('tab-btn-b');
 
-    // イベントリスナー
-    btnStart.addEventListener('click', () => {
+    // イベントリスナー（スタートボタン）
+    btnStart.addEventListener('click', (e) => {
+      e.preventDefault();
       const idA = selectPathA.value;
       const idB = selectPathB.value;
 
@@ -803,13 +815,23 @@
         return;
       }
 
+      // GA4 カスタムイベント送信
+      if (typeof gtag === 'function') {
+        gtag('event', 'compare_paths', {
+          path_a: idA,
+          path_b: idB
+        });
+      }
+
       renderResult(idA, idB);
       screenInput.classList.add('hidden');
       screenResult.classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    btnReset.addEventListener('click', () => {
+    // イベントリスナー（リセットボタン）
+    btnReset.addEventListener('click', (e) => {
+      e.preventDefault();
       screenResult.classList.add('hidden');
       screenInput.classList.remove('hidden');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -861,7 +883,7 @@
         };
       }
 
-      // フォールバック（通常は全網羅しているためここには到達しません）
+      // フォールバック
       const metaA = PATH_META[idA];
       const metaB = PATH_META[idB];
       return {
@@ -904,13 +926,13 @@
       tabBtnA.textContent = `${metaA.name}`;
       tabBtnB.textContent = `${metaB.name}`;
 
-      // 強みカード構築（ペア専用データの適用）
+      // 強みカード構築
       document.getElementById('container-merits').innerHTML = `
         ${createDetailCard(metaA.name, pairData.pathA.merits, pairData.pathA.tagsMerit, 'A')}
         ${createDetailCard(metaB.name, pairData.pathB.merits, pairData.pathB.tagsMerit, 'B')}
       `;
 
-      // 注意点カード構築（ペア専用データの適用）
+      // 注意点カード構築
       document.getElementById('container-risks').innerHTML = `
         ${createDetailCard(metaA.name, pairData.pathA.risks, pairData.pathA.tagsRisk, 'A')}
         ${createDetailCard(metaB.name, pairData.pathB.risks, pairData.pathB.tagsRisk, 'B')}
