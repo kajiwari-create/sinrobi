@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シンロビAI - 子どもの将来を前向きに語り合う進路比較マップ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pathA: {
+              light: '#eff6ff',
+              DEFAULT: '#2563eb',
+              dark: '#1d4ed8',
+              border: '#bfdbfe',
+              text: '#1e40af'
+            },
+            pathB: {
+              light: '#fff7ed',
+              DEFAULT: '#f97316',
+              dark: '#ea580c',
+              border: '#fed7aa',
+              text: '#9a3412'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .break-wrap {
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
+    .custom-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen pb-12">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-sm shrink-0">
+          シ
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 leading-none">シンロビ<span class="text-blue-600">AI</span></h1>
+          <p class="text-[10px] text-slate-500 font-medium">納得のいく進路選びをサポート</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 pt-4">
+
+    <!-- 画面1: 入力フォーム -->
+    <div id="screen-input" class="space-y-4">
+      
+      <!-- ヒーロー＆コンセプト -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 custom-shadow text-center">
+        <div class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-2">
+          <i class="fa-solid fa-comments"></i> 感情的なすれ違いをゼロに
+        </div>
+        <h2 class="text-lg sm:text-xl font-bold text-slate-900 leading-snug mb-2">
+          最も複雑で揉めがちな<br>
+          <span class="text-blue-600">「中学からの進路選択」</span>を見える化
+        </h2>
+        <p class="text-xs text-slate-600 leading-relaxed max-w-md mx-auto break-wrap">
+          「私立がいい？公立がいい？」と保護者同士（ご家庭内）で価値観の違いが出やすい場面。選んだ2つの選択肢の違いをすっきり整理し、前向きな対話につなげます。
+        </p>
+      </div>
+
+      <!-- 入力フォーム -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200/80 custom-shadow space-y-4">
+        
+        <!-- 進路 A 選択 -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-pathA-text flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-pathA shrink-0"></span> 比較したい進路 1（青）
+          </label>
+          <div class="relative">
+            <select id="select-path-a" class="w-full bg-pathA-light border-2 border-pathA-border text-slate-800 text-sm font-bold rounded-xl p-3.5 pr-8 appearance-none focus:outline-none focus:border-pathA transition truncate">
+              <option value="private_high" selected>私立・難関進学校</option>
+              <option value="private_attached">私立・大学附属校</option>
+              <option value="private_mid">私立・中堅校</option>
+              <option value="public_high_top">公立中学 ➔ 高偏差値高校</option>
+              <option value="public_high_mid">公立中学 ➔ 中堅高校</option>
+              <option value="public_integrated">国公立附属・公立中高一貫校</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-pathA pointer-events-none"></i>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center my-0.5">
+          <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xs border border-slate-200">
+            VS
+          </div>
+        </div>
+
+        <!-- 進路 B 選択 -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-pathB-text flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-pathB shrink-0"></span> 比較したい進路 2（オレンジ）
+          </label>
+          <div class="relative">
+            <select id="select-path-b" class="w-full bg-pathB-light border-2 border-pathB-border text-slate-800 text-sm font-bold rounded-xl p-3.5 pr-8 appearance-none focus:outline-none focus:border-pathB transition truncate">
+              <option value="private_high">私立・難関進学校</option>
+              <option value="private_attached">私立・大学附属校</option>
+              <option value="private_mid">私立・中堅校</option>
+              <option value="public_high_top" selected>公立中学 ➔ 高偏差値高校</option>
+              <option value="public_high_mid">公立中学 ➔ 中堅高校</option>
+              <option value="public_integrated">国公立附属・公立中高一貫校</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-pathB pointer-events-none"></i>
+          </div>
+        </div>
+
+        <!-- トグルオプション -->
+        <div class="pt-2 border-t border-slate-100">
+          <label class="flex items-start gap-3 p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl cursor-pointer border border-slate-200 transition">
+            <input type="checkbox" id="check-inter" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 accent-blue-600 mt-0.5 shrink-0">
+            <div class="text-xs leading-normal">
+              <span class="font-bold text-slate-800 block">🌐 インターナショナルスクール（国際軸）の視点も重ねる</span>
+              <span class="text-slate-500 block mt-0.5">海外大やネイティブ英語力を目指す場合の選択肢を末尾に参考表示します</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- スタートボタン -->
+        <button id="btn-start" type="button" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.99] transition text-sm sm:text-base flex items-center justify-center gap-2">
+          <span>2つの進路を比べる</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 画面2: 結果マップ -->
+    <div id="screen-result" class="hidden space-y-4">
+
+      <!-- 免責事項スリムバナー -->
+      <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 text-[11px] text-slate-600 leading-relaxed flex gap-2 items-start">
+        <i class="fa-solid fa-circle-info text-slate-400 mt-0.5 text-xs shrink-0"></i>
+        <div>
+          <span class="font-bold text-slate-700">ご案内・免責事項：</span>
+          提示する比較内容や概算費用は公的データ等に基づく一般的な傾向を整理した参考情報です。実際の状況は学校ごとに異なりますので、話し合いのきっかけとしてご活用ください。
+        </div>
+      </div>
+
+      <!-- 比較ヘッダー概要 -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200/80 custom-shadow space-y-3 text-center">
+        <div class="inline-block bg-slate-100 text-slate-700 font-bold text-xs px-3 py-1 rounded-full" id="res-copy-tag">
+          比較
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2 text-left pt-1">
+          <!-- Aブランド -->
+          <div class="bg-pathA-light border border-pathA-border rounded-xl p-3 relative overflow-hidden">
+            <span class="absolute top-0 right-0 bg-pathA text-white text-[9px] font-black px-1.5 py-0.5 rounded-bl">進路 A</span>
+            <div class="text-xs font-bold text-pathA-text mb-1 truncate pr-6" id="res-name-a">進路A</div>
+            <div class="text-sm sm:text-base font-black text-slate-900 leading-none mb-1" id="res-cost-a">約000万円</div>
+            <div class="text-[10px] text-slate-500 font-medium">中高6年間・概算総額</div>
+          </div>
+          <!-- Bブランド -->
+          <div class="bg-pathB-light border border-pathB-border rounded-xl p-3 relative overflow-hidden">
+            <span class="absolute top-0 right-0 bg-pathB text-white text-[9px] font-black px-1.5 py-0.5 rounded-bl">進路 B</span>
+            <div class="text-xs font-bold text-pathB-text mb-1 truncate pr-6" id="res-name-b">進路B</div>
+            <div class="text-sm sm:text-base font-black text-slate-900 leading-none mb-1" id="res-cost-b">約000万円</div>
+            <div class="text-[10px] text-slate-500 font-medium">中高6年間・概算総額</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- モバイル用 表示切替タブ -->
+      <div class="flex bg-slate-200/70 p-1 rounded-xl font-bold text-xs gap-1 sm:hidden">
+        <button id="tab-btn-both" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-slate-900 transition">2つ見比べる</button>
+        <button id="tab-btn-a" class="flex-1 py-2 rounded-lg text-pathA-text transition truncate">進路A</button>
+        <button id="tab-btn-b" class="flex-1 py-2 rounded-lg text-pathB-text transition truncate">進路B</button>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- Section 1: 強み・魅力 -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 custom-shadow">
+          <div class="flex items-center gap-2 font-bold text-xs sm:text-sm text-slate-900 mb-3 border-b border-slate-100 pb-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-thumbs-up"></i>
+            </span>
+            <span>選んだ進路の「強み・魅力」</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="container-merits">
+            <!-- JSで動的生成 -->
+          </div>
+        </div>
+
+        <!-- Section 2: 注意点・留意すること -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/80 custom-shadow">
+          <div class="flex items-center gap-2 font-bold text-xs sm:text-sm text-slate-900 mb-3 border-b border-slate-100 pb-2">
+            <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+            <span>あらかじめ知っておきたい「注意点・留意すること」</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="container-risks">
+            <!-- JSで動的生成 -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- お金シミュレーション -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200/80 custom-shadow space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <div class="flex items-center gap-2 font-bold text-xs sm:text-sm text-slate-900">
+            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-calculator"></i>
+            </span>
+            <span>中高6年間の「お金」シミュレーション</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium">※学校学費＋通塾費の目安</span>
+        </div>
+
+        <div class="space-y-2.5" id="container-cost-detail">
+          <!-- JSで動的生成 -->
+        </div>
+      </div>
+
+      <!-- 共通の前提 -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200/80 custom-shadow space-y-3">
+        <div class="flex items-center gap-2 font-bold text-xs sm:text-sm text-slate-900 border-b border-slate-100 pb-2">
+          <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs shrink-0">
+            <i class="fa-solid fa-lightbulb"></i>
+          </span>
+          <span>知っておきたい「どちらにも共通する前提」</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200">
+            <div class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-book-open text-blue-500 shrink-0"></i>
+              <span>勝手に自律して勉強するわけではない</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px] break-wrap">
+              どちらを選んでも集団内での成績差は生まれます。環境任せにせず、家庭での学習習慣づくりや本人の適性に合わせたサポートが共通して必要です。
+            </p>
+          </div>
+
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200">
+            <div class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-chalkboard-user text-indigo-500 shrink-0"></i>
+              <span>教員ごとの指導力や相性の個人差</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px] break-wrap">
+              どの学校を選んでも教員個人の教え方や相性の差は存在します。私立と公立で教員の異動の有無や体制にそれぞれ異なる特徴があるため、一概にどちらが良いとは言えません。
+            </p>
+          </div>
+
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200">
+            <div class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-users text-emerald-500 shrink-0"></i>
+              <span>対人トラブル・人間関係の摩擦</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px] break-wrap">
+              一般的な私立と公立においては、人間関係のトラブルの発生率自体に極端な差はありません。学校の対応姿勢や相談体制を見極めることが重要です。
+            </p>
+          </div>
+
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-200">
+            <div class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+              <i class="fa-solid fa-laptop text-amber-500 shrink-0"></i>
+              <span>英語力やデジタル環境の差</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px] break-wrap">
+              公立校でも1人1台端末が普及しています。また私立のネイティブ授業も週数時間では決定打にならず、本人の自学や外部体験に依存します。
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- インターナショナルスクール -->
+      <div id="container-inter" class="hidden bg-purple-50/70 border border-purple-200/80 rounded-2xl p-4 shadow-sm space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-purple-200/60 pb-2 gap-1.5">
+          <div class="flex items-center gap-2 font-bold text-xs sm:text-sm text-purple-900">
+            <span class="w-6 h-6 rounded-full bg-purple-200 text-purple-700 flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-globe"></i>
+            </span>
+            <span class="leading-snug">【参考】インターナショナルスクール（国際軸）という視点</span>
+          </div>
+          <span class="text-[10px] font-bold bg-purple-200 text-purple-800 px-2.5 py-0.5 rounded-full w-fit whitespace-nowrap self-start sm:self-auto">別枠参照</span>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <div class="bg-white/90 rounded-xl p-3 border border-purple-100 shadow-sm">
+            <span class="font-bold text-purple-900 block mb-1">💡 教育思想の違い</span>
+            <p class="text-slate-600 text-[11px] leading-relaxed break-wrap">ペーパーテストの点数暗記ではなく、「問いを立てて議論・プレゼンする探究型授業（IB等）」が教育のベースとなります。</p>
+          </div>
+          <div class="bg-white/90 rounded-xl p-3 border border-purple-100 shadow-sm">
+            <span class="font-bold text-purple-900 block mb-1">🎓 進路・大学の出口</span>
+            <p class="text-slate-600 text-[11px] leading-relaxed break-wrap">日本のペーパーテスト受験とは親和性が低く、海外大学や国内大学の総合型選抜（旧AO）・帰国生枠が中心となります。</p>
+          </div>
+          <div class="bg-white/90 rounded-xl p-3 border border-purple-100 shadow-sm">
+            <span class="font-bold text-purple-900 block mb-1">💰 年間費用と家庭のフォロー</span>
+            <p class="text-slate-600 text-[11px] leading-relaxed break-wrap">年間200万〜300万円の学費負担に加え、家庭内で高度な日本語力や論理的思考力を伸ばす意識的なフォローが必要です。</p>
+          </div>
+          <div class="bg-white/90 rounded-xl p-3 border border-purple-100 shadow-sm">
+            <span class="font-bold text-purple-900 block mb-1">🔍 検討する際の軸</span>
+            <p class="text-slate-600 text-[11px] leading-relaxed break-wrap">「日本の受験レールを降りて、グローバル標準の思考力と英語力を買いにいく覚悟があるか」を自問する対照群として有効です。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 条件変更ボタン -->
+      <button id="btn-reset" type="button" class="w-full bg-slate-200 hover:bg-slate-300 active:scale-[0.99] text-slate-700 font-bold py-3.5 px-4 rounded-xl transition text-xs flex items-center justify-center gap-2">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>進路の組み合わせを選び直す</span>
+      </button>
+
+    </div>
+
+  </main>
+
+  <script>
+    // 基本メタ情報
+    const PATH_META = {
+      private_high: { name: "私立・難関進学校", costTotal: 850, schoolCost: "約600万円（年100万×中高6年間）", cramCost: "約250万円（中高6年間の難関塾等）" },
+      private_attached: { name: "私立・大学附属校", costTotal: 800, schoolCost: "約650万円（年110万×中高6年間）", cramCost: "約150万円（習い事・内部補習等）" },
+      private_mid: { name: "私立・中堅校", costTotal: 650, schoolCost: "約500万円（年85万×中高6年間）", cramCost: "約150万円（補習塾・個別指導等）" },
+      public_high_top: { name: "公立中学 ➔ 高偏差値高校", costTotal: 350, schoolCost: "約200万円（教材費・公立高校学費等）", cramCost: "約150万円（高校受験塾・予備校）" },
+      public_high_mid: { name: "公立中学 ➔ 中堅高校", costTotal: 300, schoolCost: "約180万円（教材費・公立高校学費等）", cramCost: "約120万円（高校受験塾など）" },
+      public_integrated: { name: "国公立附属・公立中高一貫校", costTotal: 400, schoolCost: "約250万円（教材費・一貫校学費等）", cramCost: "約150万円（受検塾・予備校）" }
+    };
+
+    // 全15通りの組み合わせを完全網羅した対比データベース
+    const PAIR_COMPARISON_DB = {
+      // 1. 私立難関 vs 私立附属
+      "private_high__private_attached": {
+        copy: "限界突破の難関大挑戦 vs 大学保証と6年間の体験投資",
+        pathA: {
+          tagsMerit: ["進学先の上限なし", "目標達成力の醸成"],
+          tagsRisk: ["6年間の受験意識", "進路保証なし"],
+          merits: [
+            { title: "進学先の選択肢の広さ", body: "特定の大学に縛られず、本人の伸びしろや興味に応じて最難関大学まで自由に挑戦できます。" },
+            { title: "目標達成力と勉強の体力", body: "高い目標に向かって努力し抜く過程で、将来の社会生活でも活きる自己管理力が身につきやすいです。" }
+          ],
+          risks: [
+            { title: "中高6年間受験への意識が必要", body: "中学受験が終わった後も模試や大学受験を見据えた勉強が続き、気持ちが休まりにくい面があります。" },
+            { title: "成績不振時の進路リスク", body: "系列大学のような保証がないため、勉強につまずいた場合に希望するレベルの大学へ進むのが難しくなる場合があります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["系列大への進学権利", "中高6年間の体験投資"],
+          tagsRisk: ["希望学部の枠制限", "学習モチベーション低下"],
+          merits: [
+            { title: "系列大学への進学権利（将来の安心感）", body: "系列大学への進学権を保持したまま、過度な受験ストレスを避けて中高生活を謳歌できます。" },
+            { title: "中高6年間を好きな活動に注力できる", body: "受験勉強に時間を取られにくいため、部活、趣味、留学など自分ならではの強みを伸ばせます。" }
+          ],
+          risks: [
+            { title: "希望学部の枠制限（学部選択の幅）", body: "医学部や一部人気学部への内部進学枠は限られており、他大学を目指す際のサポートも学校により異なります。" },
+            { title: "学習意欲の維持が難しくなるリスク", body: "外部受験の必要性がないため、自分から目標を見つけないと勉強に対するモチベーションが落ちがちです。" }
+          ]
+        }
+      },
+
+      // 2. 私立難関 vs 私立中堅
+      "private_high__private_mid": {
+        copy: "難関大合格に挑む環境 vs 手厚いフォローと指定校推薦",
+        pathA: {
+          tagsMerit: ["高い難関大合格実績", "ハイレベルな授業進度"],
+          tagsRisk: ["高度な二重通塾率", "集団内での挫折感"],
+          merits: [
+            { title: "圧倒的な難関大受験ノウハウ", body: "東大や国公立・難関私大を目指す環境と情報が揃っており、周囲の刺激を受けて高く伸びやすいです。" },
+            { title: "中高一貫の高速カリキュラム", body: "高2までに中高の学習範囲を終え、高3の1年間を受験対策にフル活用できるアドバンテージがあります。" }
+          ],
+          risks: [
+            { title: "難関塾との二重負担リスク", body: "学校の授業速度が非常に早いため、ついていくために中1から大手進学塾に通う家庭が多く見られます。" },
+            { title: "成績が伸び悩んだ際の精神的負担", body: "周囲が優秀なため、一度下位に落ちると自己肯定感の回復に時間がかかることがあります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["きめ細やかな学習フォロー", "指定校推薦枠の保持"],
+          tagsRisk: ["難関大一般受験のサポート控えめ", "環境の固定化"],
+          merits: [
+            { title: "学校側による手厚い個別サポート", body: "補習や再テスト体制が整っており、塾頼みにしなくても学校が丁寧に進捗を管理してくれやすいです。" },
+            { title: "指定校推薦枠の活用と手堅い進学", body: "有名私大の推薦枠を保持していることが多く、校内成績をキープできれば手堅い大学進学が狙えます。" }
+          ],
+          risks: [
+            { title: "最難関大一般入試への自力挑戦", body: "授業進度や周囲の雰囲気がマイルドなため、最難関を目指す場合は本人の強い意志と自学が必要です。" },
+            { title: "6年間の人間関係固定化", body: "メンバーや雰囲気が大きく変わらないため、途中で校風に馴染めなかった場合の選択肢が限られます。" }
+          ]
+        }
+      },
+
+      // 3. 私立難関 vs 公立トップ
+      "private_high__public_high_top": {
+        copy: "最速の難関大ルート vs コストを抑えた高校受験挑戦",
+        pathA: {
+          tagsMerit: ["トラブルが少ない環境", "中高一貫の先取り"],
+          tagsRisk: ["通塾の二重コスト", "成績の伸び悩みリスク"],
+          merits: [
+            { title: "トラブルが比較的少ない学習環境", body: "高い目標を持った生徒が集まりやすく、互いの邪魔をしない落ち着いた環境が保たれやすいです。" },
+            { title: "中高一貫の先取りと手厚い授業", body: "授業の進度が早く、難関大学の受験に必要な学力を早い段階から目指しやすい体制が整っています。" }
+          ],
+          risks: [
+            { title: "難関校向け塾との二重負担", body: "学校の授業進度が非常に早いため、ついていくために中1から高度な進学塾に通うご家庭も多く見られます。" },
+            { title: "上位層が集まる中での成績伸び悩みリスク", body: "周囲のレベルが極めて高いため、成績が振るわない時期が続くと自己肯定感が下がりやすい傾向があります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["中学授業料0円", "多様性への揉まれ経験"],
+          tagsRisk: ["内申点への配慮・対策", "高校受験へのリソース集中"],
+          merits: [
+            { title: "授業料の負担軽減と資金のゆとり", body: "中学の授業料がかからないため学費全体を大幅に抑えられ、浮いたお金を将来の大学費用や習い事に貯めておけます。" },
+            { title: "多様性のある環境での人間関係", body: "中学時代にさまざまな家庭環境や考え方の人と過ごすことで、社会に出たときの柔軟性が育まれやすいです。" }
+          ],
+          risks: [
+            { title: "中学時代の内申点への配慮・対策", body: "高校から環境は大きく変わりますが、中学時代は定期テストだけでなく提出物や授業態度など複合的な対策が必要です。" },
+            { title: "高校受験へのリソース集中", body: "中学3年時に高校受験対策にリソースを注ぐ必要があり、6年間連続での先取り学習や活動の継続が一時ストップします。" }
+          ]
+        }
+      },
+
+      // 4. 私立難関 vs 公立中堅
+      "private_high__public_high_mid": {
+        copy: "高度な難関大環境 vs 圧倒的低コストと身の丈進学",
+        pathA: {
+          tagsMerit: ["最先端の受験カリキュラム", "高い学習モチベーション"],
+          tagsRisk: ["莫大な費用負担", "学習進度の速さ"],
+          merits: [
+            { title: "難関大合格に向けた最短ルート", body: "高い目標を持った仲間と高度な授業で、最難関レベルの大学受験に対応できる学力が整います。" },
+            { title: "中高6年間の安定した学習環境", body: "高校受験で分断されることなく、中高6年間を通して落ち着いた環境で勉強に没頭できます。" }
+          ],
+          risks: [
+            { title: "高い経済的負担（学費＋塾代）", body: "私立の授業料に加えて高度な進学塾の費用がかさみ、ご家庭の資金計画を大きく圧迫しやすいです。" },
+            { title: "ハイスピードな授業への適応が必要", body: "進度が非常に早いため、一度つまずくと自力での挽回が難しくなるケースがあります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["経済的負担の少なさ", "自分のペースを維持"],
+          tagsRisk: ["難関大一般入試の難しさ", "中学からの通塾必須"],
+          merits: [
+            { title: "学費負担の軽さと資金プール", body: "中高ともに学費が大幅に抑えられるため、将来の大学費や留学などに費用をしっかり残しておけます。" },
+            { title: "無理のない生活ペースの確保", body: "過剰な受験競争に追われすぎず、部活や趣味、家庭の時間を大切にしながら過ごせます。" }
+          ],
+          risks: [
+            { title: "難関大合格には個人での相当な努力が必要", body: "学校の指導や周囲の雰囲気が難関大受験モードになりにくいため、上位大学を目指す場合は個人の強い意志が必要です。" },
+            { title: "高校受験塾への継続的な通塾", body: "学校の授業だけでは高校受験のカバーが難しいため、中学生からの塾費用が実質必須となります。" }
+          ]
+        }
+      },
+
+      // 5. 私立難関 vs 公立一貫
+      "private_high__public_integrated": {
+        copy: "私立の最先端ノウハウ vs 低コストで質の高い公立一貫",
+        pathA: {
+          tagsMerit: ["圧倒的な受験実績", "私立ならではの設備"],
+          tagsRisk: ["高額な学費負担", "ペーパーテスト偏重になりやすい"],
+          merits: [
+            { title: "豊富な受験データと手厚いノウハウ", body: "長年の私立難関受験のデータが蓄積されており、難関大合格に向けた最短距離の指導が受けられます。" },
+            { title: "高度な学習意欲を持つ集団", body: "厳しい中学受験を通った生徒同士、お互いに刺激し合いながら高め合える環境があります。" }
+          ],
+          risks: [
+            { title: "学費・通塾費を合わせた経済負担", body: "学費に加えて高度な通塾費用がかかりやすく、公立に比べて莫大な教育資金が必要となります。" },
+            { title: "偏差値・テスト中心になりがちな傾向", body: "大学受験が中心になりやすく、探究活動や自由な体験に割く時間が少なくなる場合があります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["公立学費で一貫教育", "思考力・探究学習重視"],
+          tagsRisk: ["適性検査の不確実性", "高学年での予備校頼み"],
+          merits: [
+            { title: "公立と同等の学費で中高一貫の環境", body: "私立に比べて学費が圧倒的に安く、高い費用対効果で6年間の一貫教育を受けられます。" },
+            { title: "記述・探究・思考力を育む独自教育", body: "暗記だけでなく、自分の考えを論理的に書いて伝える探究型の授業が充実しています。" }
+          ],
+          risks: [
+            { title: "受検（適性検査）の予測の立てにくさ", body: "私立のペーパーテストと異なり、思考力・文章表現を問う形式のため当日の相性による不確実性があります。" },
+            { title: "大学受験指導の私立との差", body: "私立進学校ほど受験特化型ではない場合があり、難関大を目指す際は高学年で予備校を活用するケースが多いです。" }
+          ]
+        }
+      },
+
+      // 6. 私立附属 vs 私立中堅
+      "private_attached__private_mid": {
+        copy: "系列大進学権と自由な中高生活 vs 手厚い補習と指定校推薦",
+        pathA: {
+          tagsMerit: ["系列大への安心感", "6年間の没入体験"],
+          tagsRisk: ["外部挑戦のハードル", "希望学部枠の制限"],
+          merits: [
+            { title: "受験プレッシャーのない6年間", body: "大学進学の権利を保持したまま、過度なテスト競争を避けて伸び伸びと中高生活を楽しめます。" },
+            { title: "強みや趣味を徹底的に伸ばせる", body: "部活や留学、独自のプロジェクトなど、受験勉強以外の「個人の武器」に時間を注げます。" }
+          ],
+          risks: [
+            { title: "外部の難関大を目指す際のサポート不足", body: "内部進学が前提の雰囲気があるため、国公立や他大学を目指す場合は周囲との温度差が出やすいです。" },
+            { title: "人気学部（医学部・理系等）の枠制限", body: "系列大の全学部に自由に行けるわけではなく、校内成績による希望学部の枠争いが発生します。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["学校の補習・学習フォロー", "指定校推薦の充実"],
+          tagsRisk: ["一般入試での難関大突破", "6年間の環境固定"],
+          merits: [
+            { title: "学校内での手厚い補習体制", body: "塾に通わなくても学校のサポートで成績を維持しやすく、ついていけない生徒へのケアが丁寧です。" },
+            { title: "指定校推薦枠の保持と手堅い進学", body: "提携私大の指定校推薦枠を活用し、日頃の学校成績をベースに手堅く大学進学を目指せます。" }
+          ],
+          risks: [
+            { title: "一般入試での難関大突破には本人の努力が必要", body: "授業進度や周囲の意識が控えめなため、一般入試で難関大を目指す場合は相応の個別対策が必要です。" },
+            { title: "途中で環境を変えにくい固定感", body: "6年間メンバーや雰囲気が大きく変わらないため、馴染めなかった際の選択肢が限られやすいです。" }
+          ]
+        }
+      },
+
+      // 7. 私立附属 vs 公立トップ
+      "private_attached__public_high_top": {
+        copy: "大学保証のゆとり vs 高校受験からの一般入試挑戦",
+        pathA: {
+          tagsMerit: ["系列大進学権", "受験ストレス軽減"],
+          tagsRisk: ["学習意欲の維持が難", "希望学部の枠制限"],
+          merits: [
+            { title: "確実な学歴確保と安心感", body: "系列大学への進学権利を保持しながら、多感な時期を受験勉強のプレッシャーなしで過ごせます。" },
+            { title: "中高6年間の没入・体験投資", body: "部活や留学、独自の探究など、受験勉強に縛られない独自の強みを育む時間が十分あります。" }
+          ],
+          risks: [
+            { title: "学習モチベーションの維持難", body: "外部受験の緊張感がないため、自発的に目標を持たないと学習意欲が低下しやすい面があります。" },
+            { title: "系列大内部での希望学部争い", body: "人気の学部には校内成績の上位から割り振られるため、完全に無勉強で良いわけではありません。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["学費の節約", "一般入試での一気伸ばし"],
+          tagsRisk: ["中学時代の内申点配慮", "高校受験での一時ストップ"],
+          merits: [
+            { title: "授業料0円と資金の柔軟性", body: "中学の学費がかからないため資金をプールでき、将来の大学費や外部の成長機会に投資できます。" },
+            { title: "高校受験を通じたペーパーテストの強さ", body: "高校受験を真剣に突破することで、大学受験にも活きる実戦的なペーパーテスト力が身につきます。" }
+          ],
+          risks: [
+            { title: "中学時代の内申点への配慮・対策", body: "高校で環境は変わりますが、中学時代は定期テストだけでなく提出物や授業態度への気遣いが必要です。" },
+            { title: "中3での高校受験による中断", body: "高校受験対策に時間を取られるため、中高一貫校のような6年間連続の先取りや没入は難しくなります。" }
+          ]
+        }
+      },
+
+      // 8. 私立附属 vs 公立中堅
+      "private_attached__public_high_mid": {
+        copy: "確実な系列大進学権 vs 費用を抑えた手堅い高校進学",
+        pathA: {
+          tagsMerit: ["大学受験免除のメリット", "豊かな校風・体験"],
+          tagsRisk: ["莫大な6年間学費", "他大学挑戦のハードル"],
+          merits: [
+            { title: "大学進学権を保持したゆとり", body: "系列大学への進学を確保した状態で、受験競争にとらわれない豊かな中高生活を送れます。" },
+            { title: "学校独自の魅力的なカリキュラム", body: "大学と連携した講座や部活動、国際教育など、附属校ならではの充実した環境を利用できます。" }
+          ],
+          risks: [
+            { title: "中高6年間の高い学費負担", body: "私立附属校は学費や施設費が高めに設定されていることが多く、ご家庭の継続的な資金力が必要です。" },
+            { title: "他大学挑戦時のフォローの少なさ", body: "校内が内部進学モードのため、他大学を一般受験する場合は自力での塾通いなどが必要です。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["圧倒的低コスト", "15歳での進路選べ直し"],
+          tagsRisk: ["中学からの通塾必須", "学区環境への影響"],
+          merits: [
+            { title: "経済的な負担の非常に軽さ", body: "中高ともに学費負担が小さく、浮いたお金をご家庭の蓄えや他の習い事に活用できます。" },
+            { title: "成長段階に応じた志望校選択", body: "精神的に成長した中学3年時点で、自分の学力や興味に合った高校を選び直すことができます。" }
+          ],
+          risks: [
+            { title: "中学時代からの通塾が必要になりやすい", body: "学校の授業のみでは高校受験対策が不十分になりやすく、塾通いの費用や手間が発生します。" },
+            { title: "学区やクラスの雰囲気に左右されやすい", body: "年度や学校によってクラスの落ち着きに差が出やすく、周囲の環境の影響を受けやすいです。" }
+          ]
+        }
+      },
+
+      // 9. 私立附属 vs 公立一貫
+      "private_attached__public_integrated": {
+        copy: "系列大保証と自由度 vs 低コストで思考力・探究重視",
+        pathA: {
+          tagsMerit: ["系列大進学の権利", "受験勉強からの解放"],
+          tagsRisk: ["高額な学費コスト", "ペーパーテスト学力の偏り"],
+          merits: [
+            { title: "確実な大学進学権と安心感", body: "大学受験のストレスを避け、中高6年間を部活や趣味、自己研鑽に自由に充てることができます。" },
+            { title: "充実した施設と多様な体験機会", body: "私立ならではの豊かな施設環境や海外研修など、充実した体験機会が得られます。" }
+          ],
+          risks: [
+            { title: "6年間の高額な学費負担", body: "公立一貫校に比べて学費がかなり高く、家庭の継続的な経済負担が大きくなります。" },
+            { title: "自発的な学習目標がない場合の停滞", body: "受験のプレッシャーがない分、本人が自発的に目標を持たないと学習意欲が下がりやすいです。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["公立学費で一貫教育", "思考力・記述力の養成"],
+          tagsRisk: ["大学受験は自力突破が必要", "受検対策の難しさ"],
+          merits: [
+            { title: "圧倒的なコストパフォーマンス", body: "公立並みの安い学費で、6年間の一貫教育と質の高い学習環境を獲得できます。" },
+            { title: "記述・プレゼン力を育む探究教育", body: "大学受験の暗記にとどまらない、論理的思考力や表現力を重視した授業が受けられます。" }
+          ],
+          risks: [
+            { title: "大学受験に向けた自力挑戦が必要", body: "附属校と異なり内部進学の安全網がないため、全員が大学受験に自力で挑む必要があります。" },
+            { title: "適性検査対策の予測不確実性", body: "小6での適性検査は独特の記述形式で当日の相性があり、受検対策の予測が立てにくい面があります。" }
+          ]
+        }
+      },
+
+      // 10. 私立中堅 vs 公立トップ
+      "private_mid__public_high_top": {
+        copy: "学校の手厚いサポート vs 高校受験からの上位校一気伸ばし",
+        pathA: {
+          tagsMerit: ["手厚い学習フォロー", "指定校推薦枠の活用"],
+          tagsRisk: ["難関大一般入試サポート控えめ", "学費負担"],
+          merits: [
+            { title: "補習や再テストなど丁寧な管理", body: "塾任せにせず学校内で手厚く面倒を見てくれるため、学習習慣が不安な場合もフォローしてもらえます。" },
+            { title: "指定校推薦を活用した手堅い進学", body: "有名私大の指定校推薦枠を保有していることが多く、校内成績を保てば安全な進学が狙えます。" }
+          ],
+          risks: [
+            { title: "最難関大一般入試へのサポートは控えめ", body: "学校の進度や雰囲気がマイルドなため、東大や難関国公立を目指す場合は本人の強い意志が必要です。" },
+            { title: "中高6年間の私立学費がかかる", body: "公立に比べると学費負担が大きく、期待する進学成果とのバランスを考える必要があります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["中学授業料0円", "一般入試での一気伸ばし"],
+          tagsRisk: ["中学時代の内申点配慮", "高校受験での一時中断"],
+          merits: [
+            { title: "学費を抑えて大学費用に資金集中", body: "中学の学費がかからないため費用をしっかりプールし、高校や大学での教育費に充てられます。" },
+            { title: "高偏差値高校での切磋琢磨", body: "高校進学後に優秀な仲間と競い合い、難関大一般入試に向けた実戦力が大きく伸びます。" }
+          ],
+          risks: [
+            { title: "中学時代の内申対策・環境ケア", body: "中学3年間は内申点への配慮が必要で、周囲の環境や先生との相性などの影響を受けやすいです。" },
+            { title: "中3での高校受験による一時ストップ", body: "高校受験対策にリソースを割くため、中高一貫校のような6年間の連続的な先取りはできません。" }
+          ]
+        }
+      },
+
+      // 11. 私立中堅 vs 公立中堅
+      "private_mid__public_high_mid": {
+        copy: "私立の手厚い環境・サポート vs 抑えたコストと高校での推薦活用",
+        pathA: {
+          tagsMerit: ["学校の補習サポート", "指定校推薦枠", "アットホーム環境"],
+          tagsRisk: ["難関大受験サポートは控えめ", "6年間の環境固定"],
+          merits: [
+            { title: "学校側による学習フォローの手厚さ", body: "補習や再テストなど学校内でのサポートが充実しており、塾頼みにしなくても学習を管理してもらいやすいです。" },
+            { title: "指定校推薦枠を活用した安定進学", body: "提携する私立大学の推奨枠を持っていることが多く、校内の成績を維持できれば確実な進学を狙えます。" }
+          ],
+          risks: [
+            { title: "難関大への一般受験は本人の意志次第", body: "学校の授業進度や周囲の受験意識が控えめなため、最難関を目指す場合は個人の強い意志と自学・通塾が必要です。" },
+            { title: "6年間の環境が固定されるリスク", body: "中高で人間関係や校風が大きく変わらないため、途中で馴染めなくなった場合の選択肢が限られやすいです。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["圧倒的低コスト", "指定校推薦枠の狙い目", "自分のペースを維持"],
+          tagsRisk: ["中学からの通塾必須", "学区やクラスの雰囲気に左右されやすい"],
+          merits: [
+            { title: "経済的な負担が非常に少ない", body: "中高ともに学費が抑えられるため、将来の費用として資金をご家庭に残しておきやすいです。" },
+            { title: "高校での上位キープと指定校推薦戦略", body: "高校で上位の成績を維持しやすく、私立大学などの指定校推薦枠を活用した手堅い進学戦略が立てやすくなります。" }
+          ],
+          risks: [
+            { title: "中学時代からの通塾が必要になりやすい", body: "学校の授業だけでは高校受験対策が不十分になることがあり、中学生のうちから学習塾への通塾が必要になりやすいです。" },
+            { title: "学区やクラスの雰囲気に左右されやすい", body: "年度や地域によって、クラスの雰囲気や先生の指導方針にバラつきが出やすく、周囲の影響を受けやすい面があります。" }
+          ]
+        }
+      },
+
+      // 12. 私立中堅 vs 公立一貫
+      "private_mid__public_integrated": {
+        copy: "私立の手厚い学習フォロー vs 低コストな公立一貫・探究教育",
+        pathA: {
+          tagsMerit: ["きめ細やかな補習ケア", "私立の指定校推薦枠"],
+          tagsRisk: ["難関大一般入試のハードル", "私立学費がかかる"],
+          merits: [
+            { title: "丁寧な学習指導と生活サポート", body: "落ちこぼれを出さないよう補習や再テストなど学校側での個別フォローが手厚いです。" },
+            { title: "私大への手堅い指定校推薦", body: "校内成績をしっかりキープできれば、提携私大への手堅い推薦進学ルートが確保できます。" }
+          ],
+          risks: [
+            { title: "最難関大一般入試へのサポートの限定感", body: "授業進度や周囲の受験意欲がマイルドなため、一般入試での難関大突破には個人の対策が必要です。" },
+            { title: "公立一貫に比べると学費が高い", body: "同じ手厚さや一貫環境でも公立一貫校に比べ学費がかかるため、コスト対効果の検討が必要です。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["公立と同等の低学費", "思考力・表現力の育成"],
+          tagsRisk: ["受検（適性検査）の難しさ", "高学年での予備校頼み"],
+          merits: [
+            { title: "低学費で受けられる質の高い一貫教育", body: "私立に比べて学費負担が大幅に軽く、高い費用対効果で中高一貫の教育環境を利用できます。" },
+            { title: "記述・思考力を育む独自カリキュラム", body: "暗記中心ではなく、探究やプレゼンなどこれからの時代に必要な非認知能力を鍛える授業が豊富です。" }
+          ],
+          risks: [
+            { title: "小6適性検査の対策の不確実性", body: "知識暗記ではない記述形式のため、当日の問題との相性など予測が立てにくい面があります。" },
+            { title: "大学受験に向けたサポートの学校差", body: "私立進学校ほど受験指導に特化していない場合があり、高校高学年での大手予備校通塾が必要になるケースがあります。" }
+          ]
+        }
+      },
+
+      // 13. 公立トップ vs 公立中堅
+      "public_high_top__public_high_mid": {
+        copy: "難関高での競争・一般受験重視 vs 手堅い高校・指定校推薦・マイペース重視",
+        pathA: {
+          tagsMerit: ["難関大一般入試に強い", "高い意識の切磋琢磨"],
+          tagsRisk: ["中学時代の激しい内申争い", "高校でのハイレベルな競争"],
+          merits: [
+            { title: "高偏差値高校での切磋琢磨", body: "高校進学後に周囲のモチベーションが高く、難関大学の一般入試に向けた雰囲気が自然と作られます。" },
+            { title: "高校受験突破で培うペーパーテスト力", body: "激しい高校受験を勝ち抜くことで、大学受験にも直接通じるペーパーテストの強さが身につきます。" }
+          ],
+          risks: [
+            { title: "中学時代の上位内申点の取りにくさ", body: "トップ校を目指す生徒同士で中学の内申点を競うため、オール5に近い成績の維持に気を使います。" },
+            { title: "高校進学後のハイスピードな授業", body: "トップ校の授業進度は速いため、高校入学直後から予備校や自習でのフォローが必要になります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["圧倒的低コスト", "指定校推薦枠の狙い目"],
+          tagsRisk: ["中学からの通塾必須", "学区やクラスの雰囲気に左右されやすい"],
+          merits: [
+            { title: "高校での上位キープと指定校推薦戦略", body: "高校で上位の成績を維持しやすく、私立大学などの指定校推薦枠を活用した手堅い進学戦略が立てやすくなります。" },
+            { title: "中学時代に自分のペースを保ちやすい", body: "過剰な内申点プレッシャーに追われすぎず、部活や習い事と両立しながら高校受験に臨めます。" }
+          ],
+          risks: [
+            { title: "難関大一般入試へのサポートは控えめ", body: "高校の周囲の雰囲気が推薦重視になりやすいため、最難関大学の一般入試を目指す場合は個人の強い意志が必要です。" },
+            { title: "学区やクラスの雰囲気に左右されやすい", body: "年度や地域によって、クラスの雰囲気や先生の指導方針にバラつきが出やすく、周囲の影響を受けやすい面があります。" }
+          ]
+        }
+      },
+
+      // 14. 公立トップ vs 公立一貫
+      "public_high_top__public_integrated": {
+        copy: "高校受験からの難関高一気伸ばし vs 低コストな中高一貫探究教育",
+        pathA: {
+          tagsMerit: ["一般入試での突破力", "高偏差値高校の切磋琢磨"],
+          tagsRisk: ["中学3年間の内申配慮", "高校受験での一時中断"],
+          merits: [
+            { title: "高校受験を勝ち抜く実戦力", body: "高校受験に向けた集中的な勉強を通じて、ペーパーテストで点を取る基礎体力と実戦力が身につきます。" },
+            { title: "高偏差値高校での切磋琢磨", body: "高校でレベルの高い仲間と出会い、難関大一般入試に向けて一気に学力を伸ばせる環境があります。" }
+          ],
+          risks: [
+            { title: "中学3年間の内申点プレッシャー", body: "希望の高校を受けるために、定期テストや提出物、授業態度など中学3年間配慮を続ける必要があります。" },
+            { title: "中3での受験対策による一時ストップ", body: "高校受験対策に時間が割かれるため、中高一貫校のような6年間を見据えた先取りや探究は難しくなります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["公立学費で一貫校", "思考力・記述・探究授業"],
+          tagsRisk: ["適性検査対策の不確実性", "高校高学年での予備校利用"],
+          merits: [
+            { title: "低学費で得られる6年間の連続性", body: "公立と同等の学費負担で高校受験の中断なく、6年間じっくり学習や活動に打ち込めます。" },
+            { title: "思考力・表現力を育む独自カリキュラム", body: "記述問題やグループワークなどを通じて、大学受験を超えた社会で活きる表現力を育めます。" }
+          ],
+          risks: [
+            { title: "受検（適性検査）の予測の難しさ", body: "小6での適性検査は独特の思考力を問うため、当日の相性や運の要素があり対策が立てにくいです。" },
+            { title: "大学受験対策での予備校依存", body: "私立進学校ほど受験特化型でない場合があり、東大・難関国公立を目指す際は高校後半で予備校が必要になることがあります。" }
+          ]
+        }
+      },
+
+      // 15. 公立中堅 vs 公立一貫
+      "public_high_mid__public_integrated": {
+        copy: "標準的な公立・高校での推薦活用 vs 低コストで挑戦する中高一貫校",
+        pathA: {
+          tagsMerit: ["圧倒的低コスト", "15歳での進路選べ直し"],
+          tagsRisk: ["中学からの通塾必須", "学区環境への依存"],
+          merits: [
+            { title: "経済的負担の非常に軽さ", body: "中高ともに学費負担が抑えられ、家庭の資金計画にゆとりを持ちやすいです。" },
+            { title: "15歳時点での成長に応じた進路選択", body: "精神的に成長した中学3年時に、自分の適性や学力に合わせた高校を選び直せます。" }
+          ],
+          risks: [
+            { title: "中学からの塾通いが必要になりやすい", body: "学校の授業のみでは高校受験対策が不十分になりやすく、学習塾への通塾がほぼ必須となります。" },
+            { title: "周囲の環境や雰囲気に左右されやすい", body: "年度や学区によってクラスの落ち着きや指導体制に差が出やすく、周囲の影響を受けやすい面があります。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["公立学費で一貫教育", "思考力・探究重視"],
+          tagsRisk: ["受検（適性検査）の難しさ", "大学受験に向けた自力努力"],
+          merits: [
+            { title: "公立の学費で中高一貫の環境を獲得", body: "安い学費で6年間の一貫環境を得られ、高校受験の中断なしに学校生活を送れます。" },
+            { title: "探究力・表現力を育む質の高い授業", body: "単なる暗記ではなく、自分の言葉で考えをまとめる高度な授業に取り組むことができます。" }
+          ],
+          risks: [
+            { title: "小6時点での受検（適性検査）の難易度", body: "公立一貫校は倍率が高く、独特の記述問題が出題されるため、事前の受検対策が必要です。" },
+            { title: "全員が大学受験に自力で挑む必要あり", body: "附属校のような内部進学枠はないため、高校高学年では自発的に大学受験対策に取り組む必要があります。" }
+          ]
+        }
+      }
+    };
+
+    // 状態管理
+    let currentFilter = 'both';
+
+    // DOM要素
+    const screenInput = document.getElementById('screen-input');
+    const screenResult = document.getElementById('screen-result');
+    const selectPathA = document.getElementById('select-path-a');
+    const selectPathB = document.getElementById('select-path-b');
+    const checkInter = document.getElementById('check-inter');
+    const btnStart = document.getElementById('btn-start');
+    const btnReset = document.getElementById('btn-reset');
+
+    const tabBtnBoth = document.getElementById('tab-btn-both');
+    const tabBtnA = document.getElementById('tab-btn-a');
+    const tabBtnB = document.getElementById('tab-btn-b');
+
+    // イベントリスナー
+    btnStart.addEventListener('click', () => {
+      const idA = selectPathA.value;
+      const idB = selectPathB.value;
+
+      if (idA === idB) {
+        alert('比べられるように、異なる2つの進路を選んでね！');
+        return;
+      }
+
+      renderResult(idA, idB);
+      screenInput.classList.add('hidden');
+      screenResult.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    btnReset.addEventListener('click', () => {
+      screenResult.classList.add('hidden');
+      screenInput.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // タブ切替（モバイル）
+    tabBtnBoth.addEventListener('click', () => setFilter('both'));
+    tabBtnA.addEventListener('click', () => setFilter('a'));
+    tabBtnB.addEventListener('click', () => setFilter('b'));
+
+    function setFilter(mode) {
+      currentFilter = mode;
+      
+      [tabBtnBoth, tabBtnA, tabBtnB].forEach(btn => {
+        btn.classList.remove('bg-white', 'shadow-sm', 'text-slate-900', 'text-pathA-text', 'text-pathB-text');
+        btn.classList.add('text-slate-600');
+      });
+
+      if (mode === 'both') {
+        tabBtnBoth.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+      } else if (mode === 'a') {
+        tabBtnA.classList.add('bg-white', 'shadow-sm', 'text-pathA-text');
+      } else if (mode === 'b') {
+        tabBtnB.classList.add('bg-white', 'shadow-sm', 'text-pathB-text');
+      }
+
+      document.querySelectorAll('.card-path-a').forEach(el => {
+        el.style.display = (mode === 'both' || mode === 'a') ? 'block' : 'none';
+      });
+      document.querySelectorAll('.card-path-b').forEach(el => {
+        el.style.display = (mode === 'both' || mode === 'b') ? 'block' : 'none';
+      });
+    }
+
+    // 動的データ取得（全15通りの組み合わせを完全カバー）
+    function getPairData(idA, idB) {
+      const key = `${idA}__${idB}`;
+      const revKey = `${idB}__${idA}`;
+
+      if (PAIR_COMPARISON_DB[key]) {
+        return PAIR_COMPARISON_DB[key];
+      }
+      if (PAIR_COMPARISON_DB[revKey]) {
+        const rev = PAIR_COMPARISON_DB[revKey];
+        return {
+          copy: rev.copy,
+          pathA: rev.pathB,
+          pathB: rev.pathA
+        };
+      }
+
+      // フォールバック（通常は全網羅しているためここには到達しません）
+      const metaA = PATH_META[idA];
+      const metaB = PATH_META[idB];
+      return {
+        copy: `${metaA.name} vs ${metaB.name}`,
+        pathA: {
+          tagsMerit: ["独自の教育環境", "強みの伸長"],
+          tagsRisk: ["家庭でのサポート", "学費とのバランス"],
+          merits: [
+            { title: `${metaA.name}ならではの学習環境`, body: "独自の教育方針やカリキュラムを活かした成長が期待できます。" }
+          ],
+          risks: [
+            { title: "家庭での状況把握とケア", body: "学校任せにせず、定期的な本人の状況確認やサポートが必要です。" }
+          ]
+        },
+        pathB: {
+          tagsMerit: ["適正な環境選択", "柔軟な進路設計"],
+          tagsRisk: ["節目での意識転換", "長期視点の見守り"],
+          merits: [
+            { title: `${metaB.name}ならではのメリット`, body: "費用感や生活スタイルに合わせた柔軟な環境を選択できます。" }
+          ],
+          risks: [
+            { title: "進路変更時の準備", body: "将来的な軌道修正の際に必要となる対策を意識しておく必要があります。" }
+          ]
+        }
+      };
+    }
+
+    // 画面生成処理
+    function renderResult(idA, idB) {
+      const metaA = PATH_META[idA];
+      const metaB = PATH_META[idB];
+      const pairData = getPairData(idA, idB);
+
+      document.getElementById('res-copy-tag').textContent = pairData.copy;
+      document.getElementById('res-name-a').textContent = metaA.name;
+      document.getElementById('res-cost-a').textContent = `約${metaA.costTotal}万円`;
+      document.getElementById('res-name-b').textContent = metaB.name;
+      document.getElementById('res-cost-b').textContent = `約${metaB.costTotal}万円`;
+
+      tabBtnA.textContent = `${metaA.name}`;
+      tabBtnB.textContent = `${metaB.name}`;
+
+      // 強みカード構築（ペア専用データの適用）
+      document.getElementById('container-merits').innerHTML = `
+        ${createDetailCard(metaA.name, pairData.pathA.merits, pairData.pathA.tagsMerit, 'A')}
+        ${createDetailCard(metaB.name, pairData.pathB.merits, pairData.pathB.tagsMerit, 'B')}
+      `;
+
+      // 注意点カード構築（ペア専用データの適用）
+      document.getElementById('container-risks').innerHTML = `
+        ${createDetailCard(metaA.name, pairData.pathA.risks, pairData.pathA.tagsRisk, 'A')}
+        ${createDetailCard(metaB.name, pairData.pathB.risks, pairData.pathB.tagsRisk, 'B')}
+      `;
+
+      // 費用シミュレーション構築
+      document.getElementById('container-cost-detail').innerHTML = `
+        ${createCostItem(metaA, 'A')}
+        ${createCostItem(metaB, 'B')}
+      `;
+
+      // インターナショナル表示切替
+      const containerInter = document.getElementById('container-inter');
+      if (checkInter.checked) {
+        containerInter.classList.remove('hidden');
+      } else {
+        containerInter.classList.add('hidden');
+      }
+
+      setFilter('both');
+    }
+
+    // カード生成ヘルパー
+    function createDetailCard(name, items, badges, type) {
+      const isA = type === 'A';
+      const bgClass = isA ? 'bg-pathA-light/80 border-pathA-border' : 'bg-pathB-light/80 border-pathB-border';
+      const textClass = isA ? 'text-pathA-text' : 'text-pathB-text';
+      const badgeBg = isA ? 'bg-pathA text-white' : 'bg-pathB text-white';
+      const cardTypeClass = isA ? 'card-path-a' : 'card-path-b';
+
+      return `
+        <div class="${cardTypeClass} ${bgClass} border rounded-xl p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="${badgeBg} text-[10px] font-black px-2 py-0.5 rounded shrink-0">進路 ${type}</span>
+            <span class="text-xs font-bold ${textClass} truncate pl-2">${name}</span>
+          </div>
+
+          <!-- バッジタグ -->
+          <div class="flex flex-wrap gap-1">
+            ${badges.map(tag => `<span class="bg-white/90 ${textClass} font-bold text-[10px] px-2 py-0.5 rounded-full border border-slate-200/80 shadow-2xs whitespace-nowrap">${tag}</span>`).join('')}
+          </div>
+
+          <div class="space-y-2 pt-0.5">
+            ${items.map(item => `
+              <div class="bg-white/90 rounded-lg p-2.5 border border-slate-100 shadow-sm">
+                <div class="font-bold text-xs text-slate-900 mb-0.5 leading-snug">${item.title}</div>
+                <div class="text-[11px] text-slate-600 leading-relaxed break-wrap">${item.body}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // コスト生成ヘルパー
+    function createCostItem(meta, type) {
+      const isA = type === 'A';
+      const bgClass = isA ? 'bg-pathA-light/60 border-pathA-border' : 'bg-pathB-light/60 border-pathB-border';
+      const textClass = isA ? 'text-pathA-text' : 'text-pathB-text';
+      const cardTypeClass = isA ? 'card-path-a' : 'card-path-b';
+
+      return `
+        <div class="${cardTypeClass} ${bgClass} border rounded-xl p-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-xs ${textClass}">進路 ${type}：${meta.name}</span>
+            <span class="font-black text-xs sm:text-sm text-slate-900">合計 約${meta.costTotal}万円</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-600 bg-white/90 p-2 rounded-lg border border-slate-100">
+            <div><span class="font-bold text-slate-700">学校費・教材等：</span>${meta.schoolCost}</div>
+            <div><span class="font-bold text-slate-700">通塾・学習費目安：</span>${meta.cramCost}</div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
